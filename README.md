@@ -1,1 +1,2 @@
-# desafio_5
+# Desafio final do programa Trilhas-Ma
+## Aplicação em grupo
