@@ -1,2 +1,2 @@
-# Desafio final do programa Trilhas-Ma
+# Desafio final do programa Trilhas-MA
 ## Aplicação em grupo
