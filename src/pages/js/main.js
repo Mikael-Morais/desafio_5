@@ -32,6 +32,7 @@ const perguntasPesquisa = [
 let currentPage = 'home';
 let currentQuestion = 0;
 let respostasTriagem = Array(perguntasTriagem.length).fill('');
+let respostasPesquisa = Array(perguntasPesquisa.length).fill('');
 
 function navegar(pagina) {
   currentPage = pagina;
@@ -190,19 +191,31 @@ function proximaPergunta(direcao, tipo, total) {
       document.getElementById('msg').style.color = "red";
       return;
     }
-    // Salva a resposta na posição correta
-    respostasTriagem[currentQuestion] = respostaAtual;
+    // Salva a resposta no array correto
+    if (tipo === 'triagem') {
+      respostasTriagem[currentQuestion] = respostaAtual;
+    } else if (tipo === 'pesquisa') {
+      respostasPesquisa[currentQuestion] = respostaAtual;
+    }
 
     // Se for a última pergunta, envie para o backend
     if (currentQuestion === total - 1) {
-      fetch('/api/triagem', {
+      let respostas;
+      let endpoint;
+      if (tipo === 'triagem') {
+        respostas = respostasTriagem;
+        endpoint = '/api/triagem';
+      } else if (tipo === 'pesquisa') {
+        respostas = respostasPesquisa;
+        endpoint = '/api/pesquisa';
+      }
+      fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ respostas: respostasTriagem })
+        body: JSON.stringify({ respostas })
       })
       .then(response => response.json())
       .then(data => {
-        // Trate a resposta do backend aqui
         alert('Respostas salvas com sucesso!');
       })
       .catch(error => {
@@ -261,13 +274,22 @@ function enviarForm(tipo, qtd) {
     document.getElementById("msg").style.color = "red";
     return;
   }
-  respostasTriagem[qtd-1] = ultimaResposta;
-
+  // Salva a última resposta no array correto
+  let respostas;
+  if (tipo === 'triagem') {
+    respostasTriagem[qtd-1] = ultimaResposta;
+    respostas = respostasTriagem;
+  } else if (tipo === 'pesquisa') {
+    respostasPesquisa[qtd-1] = ultimaResposta;
+    respostas = respostasPesquisa;
+  }
+  // Define o endpoint de acordo com o tipo
+  const endpoint = tipo === 'pesquisa' ? '/api/pesquisa' : '/api/triagem';
   // Envia as respostas para o backend
-  fetch('/api/triagem', {
+  fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ respostas: respostasTriagem })
+    body: JSON.stringify({ respostas })
   })
   .then(response => response.json())
   .then(data => {

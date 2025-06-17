@@ -14,3 +14,12 @@ CREATE TABLE IF NOT EXISTS triagem (
     data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS pesquisa (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    pergunta TEXT NOT NULL,
+    resposta TEXT NOT NULL,
+    data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES users(id)
+);
