@@ -26,21 +26,35 @@ db.exec(schema, (err) => {
 const app = express();
 app.use(express.json());
 
-app.post('/triagem', (req, res) => {
-  const { respostas, tipo } = req.body;
-  const stmt = db.prepare("INSERT INTO triagem (pergunta, resposta) VALUES (?, ?)");
 
-  for (const pergunta in respostas) {
-    const resposta = respostas[pergunta];
-    stmt.run(pergunta, resposta);
+app.post('/api/triagem', (req, res) => {
+  const { respostas, usuario_id } = req.body;
+  if (!Array.isArray(respostas)) {
+    return res.status(400).json({ erro: 'Respostas devem ser um array.' });
   }
-
+  // Exemplo: perguntas em ordem
+  const perguntasTriagem = [
+    "Você está com febre alta?",
+    "Está com dificuldade para respirar?",
+    "Está com dores no peito?",
+    "Tem histórico de doenças crônicas?",
+    "Está com vômitos ou diarreia?",
+    "Você está com tosse persistente?",
+    "Você teve contato com alguém doente recentemente?",
+    "Você sente cansaço extremo?",
+    "Você está com manchas pelo corpo?",
+    "Está com sangramento ou secreções anormais?"
+  ];
+  const stmt = db.prepare("INSERT INTO triagem (usario_id, pergunta, resposta) VALUES (?, ?, ?)");
+  respostas.forEach((resposta, idx) => {
+    stmt.run(null, perguntasTriagem[idx], resposta);
+  });
   stmt.finalize((err) => {
     if (err) {
       console.error('Erro ao salvar triagem:', err.message);
-      res.status(500).send('Erro ao salvar triagem');
+      res.status(500).json({ erro: 'Erro ao salvar triagem' });
     } else {
-      res.status(200).send('Triagem registrada com sucesso');
+      res.status(200).json({ mensagem: 'Triagem registrada com sucesso' });
     }
   });
 });

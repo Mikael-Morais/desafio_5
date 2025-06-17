@@ -31,6 +31,7 @@ const perguntasPesquisa = [
 
 let currentPage = 'home';
 let currentQuestion = 0;
+let respostasTriagem = Array(perguntasTriagem.length).fill('');
 
 function navegar(pagina) {
   currentPage = pagina;
@@ -183,14 +184,31 @@ function criarFormulario(titulo, perguntas, tipo) {
 
 function proximaPergunta(direcao, tipo, total) {
   if (direcao === 'proxima') {
-    // Valida resposta atual
     const respostaAtual = document.getElementById(`${tipo}${currentQuestion}`).value.trim();
     if (!respostaAtual) {
       document.getElementById('msg').innerText = "Por favor, responda esta pergunta antes de continuar.";
       document.getElementById('msg').style.color = "red";
       return;
     }
-   
+    // Salva a resposta na posição correta
+    respostasTriagem[currentQuestion] = respostaAtual;
+
+    // Se for a última pergunta, envie para o backend
+    if (currentQuestion === total - 1) {
+      fetch('/api/triagem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ respostas: respostasTriagem })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Trate a resposta do backend aqui
+        alert('Respostas salvas com sucesso!');
+      })
+      .catch(error => {
+        alert('Erro ao salvar respostas!');
+      });
+    }
     currentQuestion++;
   } else {
     currentQuestion--;
