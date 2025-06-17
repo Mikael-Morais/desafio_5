@@ -45,7 +45,7 @@ app.post('/api/triagem', (req, res) => {
     "Você está com manchas pelo corpo?",
     "Está com sangramento ou secreções anormais?"
   ];
-  const stmt = db.prepare("INSERT INTO triagem (usario_id, pergunta, resposta) VALUES (?, ?, ?)");
+  const stmt = db.prepare("INSERT INTO triagem (usuario_id, pergunta, resposta) VALUES (?, ?, ?)");
   respostas.forEach((resposta, idx) => {
     stmt.run(null, perguntasTriagem[idx], resposta);
   });
