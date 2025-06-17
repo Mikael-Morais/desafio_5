@@ -26,9 +26,17 @@ db.exec(schema, (err) => {
 const app = express();
 app.use(express.json());
 
+// Servir arquivos estáticos da pasta src/pages
+app.use(express.static(path.join(__dirname, 'src', 'pages')));
+
+// Redirecionar / para index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'index.html'));
+});
 
 app.post('/api/triagem', (req, res) => {
   const { respostas, usuario_id } = req.body;
+  console.log('Respostas recebidas:', respostas); // Diagnóstico
   if (!Array.isArray(respostas)) {
     return res.status(400).json({ erro: 'Respostas devem ser um array.' });
   }

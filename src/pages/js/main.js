@@ -261,16 +261,28 @@ function enviarForm(tipo, qtd) {
     document.getElementById("msg").style.color = "red";
     return;
   }
- 
-  const msg = document.getElementById("msg");
-  msg.innerText = "Respostas enviadas com sucesso! Obrigado por contribuir.";
-  msg.style.color = "green";
-  msg.style.backgroundColor = "var(--light-color)";
- 
-  // Simula envio (em uma aplicação real, seria uma chamada AJAX)
-  setTimeout(() => {
-    navegar('home');
-  }, 2000);
+  respostasTriagem[qtd-1] = ultimaResposta;
+
+  // Envia as respostas para o backend
+  fetch('/api/triagem', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ respostas: respostasTriagem })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const msg = document.getElementById("msg");
+    msg.innerText = "Respostas enviadas com sucesso! Obrigado por contribuir.";
+    msg.style.color = "green";
+    msg.style.backgroundColor = "var(--light-color)";
+    setTimeout(() => {
+      navegar('home');
+    }, 2000);
+  })
+  .catch(error => {
+    document.getElementById("msg").innerText = "Erro ao enviar respostas.";
+    document.getElementById("msg").style.color = "red";
+  });
 }
 
 window.onload = () => {
