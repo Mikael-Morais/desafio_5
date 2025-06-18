@@ -26,10 +26,10 @@ db.exec(schema, (err) => {
 const app = express();
 app.use(express.json());
 
-// Servir arquivos estáticos da pasta src/pages
+
 app.use(express.static(path.join(__dirname, 'src', 'pages')));
 
-// Redirecionar / para index.html
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'pages', 'index.html'));
 });
