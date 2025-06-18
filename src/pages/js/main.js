@@ -232,10 +232,17 @@ function proximaPergunta(direcao, tipo, total) {
   const formContainer = document.getElementById('formContainer');
  
   if (currentQuestion < perguntas.length) {
+    // Recupera a resposta já preenchida, se houver
+    let respostaSalva = '';
+    if (tipo === 'triagem') {
+      respostaSalva = respostasTriagem[currentQuestion] || '';
+    } else if (tipo === 'pesquisa') {
+      respostaSalva = respostasPesquisa[currentQuestion] || '';
+    }
     formContainer.innerHTML = `
       <div style="background:white;padding:1.5rem;border-radius:10px;box-shadow:var(--shadow)">
         <label style="font-weight:bold;font-size:1.1rem">${perguntas[currentQuestion]}</label>
-        <textarea id='${tipo}${currentQuestion}' rows="3">${direcao === 'anterior' ? document.getElementById(`${tipo}${currentQuestion}`).value : ''}</textarea>
+        <textarea id='${tipo}${currentQuestion}' rows="3">${respostaSalva}</textarea>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:1rem">
         <button class='enviar' onclick='proximaPergunta("anterior", "${tipo}", ${total})'
