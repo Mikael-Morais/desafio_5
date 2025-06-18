@@ -31,6 +31,8 @@ const perguntasPesquisa = [
 
 let currentPage = 'home';
 let currentQuestion = 0;
+let respostasTriagem = Array(perguntasTriagem.length).fill('');
+let respostasPesquisa = Array(perguntasPesquisa.length).fill('');
 
 function navegar(pagina) {
   currentPage = pagina;
@@ -183,14 +185,43 @@ function criarFormulario(titulo, perguntas, tipo) {
 
 function proximaPergunta(direcao, tipo, total) {
   if (direcao === 'proxima') {
-    // Valida resposta atual
     const respostaAtual = document.getElementById(`${tipo}${currentQuestion}`).value.trim();
     if (!respostaAtual) {
       document.getElementById('msg').innerText = "Por favor, responda esta pergunta antes de continuar.";
       document.getElementById('msg').style.color = "red";
       return;
     }
-   
+    // Salva a resposta no array correto
+    if (tipo === 'triagem') {
+      respostasTriagem[currentQuestion] = respostaAtual;
+    } else if (tipo === 'pesquisa') {
+      respostasPesquisa[currentQuestion] = respostaAtual;
+    }
+
+    // Se for a última pergunta, envie para o backend
+    if (currentQuestion === total - 1) {
+      let respostas;
+      let endpoint;
+      if (tipo === 'triagem') {
+        respostas = respostasTriagem;
+        endpoint = '/api/triagem';
+      } else if (tipo === 'pesquisa') {
+        respostas = respostasPesquisa;
+        endpoint = '/api/pesquisa';
+      }
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ respostas })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('Respostas salvas com sucesso!');
+      })
+      .catch(error => {
+        alert('Erro ao salvar respostas!');
+      });
+    }
     currentQuestion++;
   } else {
     currentQuestion--;
@@ -243,16 +274,37 @@ function enviarForm(tipo, qtd) {
     document.getElementById("msg").style.color = "red";
     return;
   }
- 
-  const msg = document.getElementById("msg");
-  msg.innerText = "Respostas enviadas com sucesso! Obrigado por contribuir.";
-  msg.style.color = "green";
-  msg.style.backgroundColor = "var(--light-color)";
- 
-  // Simula envio (em uma aplicação real, seria uma chamada AJAX)
-  setTimeout(() => {
-    navegar('home');
-  }, 2000);
+  // Salva a última resposta no array correto
+  let respostas;
+  if (tipo === 'triagem') {
+    respostasTriagem[qtd-1] = ultimaResposta;
+    respostas = respostasTriagem;
+  } else if (tipo === 'pesquisa') {
+    respostasPesquisa[qtd-1] = ultimaResposta;
+    respostas = respostasPesquisa;
+  }
+  // Define o endpoint de acordo com o tipo
+  const endpoint = tipo === 'pesquisa' ? '/api/pesquisa' : '/api/triagem';
+  // Envia as respostas para o backend
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ respostas })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const msg = document.getElementById("msg");
+    msg.innerText = "Respostas enviadas com sucesso! Obrigado por contribuir.";
+    msg.style.color = "green";
+    msg.style.backgroundColor = "var(--light-color)";
+    setTimeout(() => {
+      navegar('home');
+    }, 2000);
+  })
+  .catch(error => {
+    document.getElementById("msg").innerText = "Erro ao enviar respostas.";
+    document.getElementById("msg").style.color = "red";
+  });
 }
 
 window.onload = () => {

@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -6,11 +6,20 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE triagem (
+CREATE TABLE IF NOT EXISTS triagem (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usuario_id INTEGER NOT NULL,
-    dor_cabeca TEXT CHECK(dor_cabeca IN ('sim', 'não')),
-    -- Adicione outras perguntas conforme necessário
+    usuario_id INTEGER,
+    pergunta TEXT NOT NULL,
+    resposta TEXT NOT NULL,
+    data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS pesquisa (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    pergunta TEXT NOT NULL,
+    resposta TEXT NOT NULL,
     data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES users(id)
 );
