@@ -1,81 +1,7 @@
-// Adiciona Font Awesome se ainda não estiver
-const fontAwesomeLink = document.createElement("link");
-fontAwesomeLink.rel = "stylesheet";
-fontAwesomeLink.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css";
-document.head.appendChild(fontAwesomeLink);
-
-// Adiciona o CSS do botão vermelho e tooltip
-const estilo = document.createElement("style");
-estilo.textContent = `
-  nav button {
-    background-color: #e53935;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 30px;
-    padding: 10px 20px;
-    margin: 5px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.3s;
-  }
-
-  nav button:hover {
-    background-color: #c62828;
-  }
-
-  .tooltip {
-    position: relative;
-  }
-
-  .tooltiptext {
-    visibility: hidden;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 8px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-`;
-document.head.appendChild(estilo);
-
-// Cria botão Login e adiciona à navbar
-const nav = document.querySelector("nav");
-const botaoLogin = document.createElement("button");
-botaoLogin.className = "tooltip";
-botaoLogin.innerHTML = `
-  <i class="fas fa-sign-in-alt"></i> Login
-  <span class="tooltiptext">Acessar conta</span>
-`;
-botaoLogin.onclick = criarTelaLogin;
-nav.appendChild(botaoLogin);
-
-// Função para criar a tela de login interativo
 function criarTelaLogin() {
   const main = document.getElementById("conteudo");
-  main.innerHTML = ""; // Limpa conteúdo anterior
+  main.innerHTML = "";
 
-  document.body.style.margin = "0";
-  document.body.style.padding = "0";
-  document.body.style.boxSizing = "border-box";
   document.body.style.backgroundColor = "#f0f4f8";
   document.body.style.fontFamily = "Arial, sans-serif";
 
@@ -91,92 +17,151 @@ function criarTelaLogin() {
 
   const titulo = document.createElement("h1");
   titulo.innerText = "Cadastro / Login";
-  titulo.style.color =  "#e53935";
+  titulo.style.color = "#e53935";
   titulo.style.marginBottom = "20px";
   container.appendChild(titulo);
 
+  // Botões
+  const btnCadastro = document.createElement("button");
+  btnCadastro.textContent = "Cadastro";
+  const btnLogin = document.createElement("button");
+  btnLogin.textContent = "Login";
+  [btnCadastro, btnLogin].forEach(btn => {
+    btn.style.margin = "0 10px 15px";
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "30px";
+    btn.style.border = "none";
+    btn.style.backgroundColor = "#e53935";
+    btn.style.color = "#fff";
+    btn.style.fontWeight = "bold";
+    btn.style.cursor = "pointer";
+  });
+
+  container.appendChild(btnCadastro);
+  container.appendChild(btnLogin);
+
   const pergunta = document.createElement("div");
-  pergunta.id = "pergunta";
-  pergunta.innerText = "Qual seu nome completo?";
   pergunta.style.fontSize = "18px";
+  pergunta.style.marginTop = "20px";
   pergunta.style.marginBottom = "15px";
   pergunta.style.color = "#333";
   container.appendChild(pergunta);
 
-  const resposta = document.createElement("textarea");
-  resposta.id = "resposta";
-  resposta.placeholder = "Digite aqui...";
+  const resposta = document.createElement("input");
   resposta.style.width = "100%";
-  resposta.style.height = "80px";
   resposta.style.padding = "10px";
   resposta.style.border = "1px solid #aaa";
   resposta.style.borderRadius = "5px";
   resposta.style.marginBottom = "15px";
-  resposta.style.resize = "none";
   container.appendChild(resposta);
 
   const btnProximo = document.createElement("button");
-  btnProximo.id = "btnProximo";
-  btnProximo.innerHTML = '<i class="fas fa-arrow-right"></i> Próximo';
-  btnProximo.style.display = "inline-flex";
-  btnProximo.style.alignItems = "center";
-  btnProximo.style.justifyContent = "center";
-  btnProximo.style.gap = "8px";
+  btnProximo.innerHTML = "Próximo";
   btnProximo.style.padding = "10px 20px";
+  btnProximo.style.borderRadius = "30px";
+  btnProximo.style.border = "none";
   btnProximo.style.backgroundColor = "#e53935";
   btnProximo.style.color = "#fff";
-  btnProximo.style.border = "2px solid #fff";
-  btnProximo.style.borderRadius = "30px";
   btnProximo.style.fontWeight = "bold";
-  btnProximo.style.fontSize = "14px";
-  btnProximo.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
   btnProximo.style.cursor = "pointer";
-  btnProximo.style.transition = "background-color 0.3s";
   container.appendChild(btnProximo);
 
-  btnProximo.addEventListener("mouseover", () => {
-    btnProximo.style.backgroundColor = "#c62828";
-  });
-  btnProximo.addEventListener("mouseout", () => {
-    btnProximo.style.backgroundColor = "#e53935";
-  });
-
-  const perguntas = [
-    "Qual seu nome completo?",
-    "Digite seu e-mail:",
-    "Crie uma senha:",
-    "Confirme sua senha:"
+  let modo = "cadastro";
+  let indice = 0;
+  let respostas = {};
+  const perguntasCadastro = [
+    { campo: "email", pergunta: "Digite seu e-mail", tipo: "email" },
+    { campo: "usuario", pergunta: "Crie um nome de usuário", tipo: "text" },
+    { campo: "cpf", pergunta: "Digite seu CPF", tipo: "text" },
+    { campo: "senha", pergunta: "Crie uma senha", tipo: "password" },
+    { campo: "nascimento", pergunta: "Digite sua data de nascimento", tipo: "date" }
   ];
 
-  let indice = 0;
+  const perguntasLogin = [
+    { campo: "usuario", pergunta: "Nome de usuário", tipo: "text" },
+    { campo: "senha", pergunta: "Senha", tipo: "password" }
+  ];
 
-  resposta.focus();
+  let perguntas = perguntasCadastro;
 
-  btnProximo.addEventListener("click", avancarPergunta);
-  resposta.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      avancarPergunta();
-    }
-  });
+  function mostrarPergunta() {
+    const atual = perguntas[indice];
+    pergunta.innerText = atual.pergunta;
+    resposta.type = atual.tipo;
+    resposta.value = "";
+    resposta.focus();
+  }
 
   function avancarPergunta() {
-    const textoResposta = resposta.value.trim();
-    if (textoResposta === "") {
-      alert("Por favor, preencha o campo.");
-      resposta.focus();
+    const valor = resposta.value.trim();
+    if (valor === "") {
+      alert("Preencha o campo.");
       return;
     }
 
+    respostas[perguntas[indice].campo] = valor;
     indice++;
+
     if (indice < perguntas.length) {
-      pergunta.innerText = perguntas[indice];
-      resposta.value = "";
-      resposta.focus();
+      mostrarPergunta();
     } else {
-      pergunta.innerText = "Cadastro concluído!";
+      if (modo === "cadastro") {
+        salvarCadastro(respostas);
+        pergunta.innerText = "Cadastro concluído!";
+      } else {
+        const sucesso = verificarLogin(respostas);
+        pergunta.innerText = sucesso ? "Login realizado!" : "Usuário ou senha incorretos!";
+      }
+
       resposta.style.display = "none";
       btnProximo.style.display = "none";
     }
   }
+
+  function salvarCadastro(dados) {
+    
+    localStorage.setItem("usuario_" + dados.usuario, JSON.stringify(dados));
+  }
+
+  function verificarLogin(loginData) {
+    const armazenado = localStorage.getItem("usuario_" + loginData.usuario);
+    if (!armazenado) return false;
+
+    const dados = JSON.parse(armazenado);
+    return dados.senha === loginData.senha;
+  }
+
+  btnCadastro.onclick = () => {
+    modo = "cadastro";
+    perguntas = perguntasCadastro;
+    indice = 0;
+    respostas = {};
+    resposta.style.display = "block";
+    btnProximo.style.display = "inline-block";
+    mostrarPergunta();
+  };
+
+  btnLogin.onclick = () => {
+    modo = "login";
+    perguntas = perguntasLogin;
+    indice = 0;
+    respostas = {};
+    resposta.style.display = "block";
+    btnProximo.style.display = "inline-block";
+    mostrarPergunta();
+  };
+
+  btnProximo.onclick = avancarPergunta;
+
+  resposta.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      avancarPergunta();
+    }
+  });
+
+  
+  btnCadastro.click();
 }
+
+
