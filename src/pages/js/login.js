@@ -1,74 +1,3 @@
-// Adiciona Font Awesome se ainda não estiver
-const fontAwesomeLink = document.createElement("link");
-fontAwesomeLink.rel = "stylesheet";
-fontAwesomeLink.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css";
-document.head.appendChild(fontAwesomeLink);
-
-// Adiciona o CSS do botão vermelho e tooltip
-const estilo = document.createElement("style");
-estilo.textContent = `
-  nav button {
-    background-color: #e53935;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 30px;
-    padding: 10px 20px;
-    margin: 5px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.3s;
-  }
-
-  nav button:hover {
-    background-color: #c62828;
-  }
-
-  .tooltip {
-    position: relative;
-  }
-
-  .tooltiptext {
-    visibility: hidden;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 8px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-`;
-document.head.appendChild(estilo);
-
-// Cria botão Login e adiciona à navbar
-const nav = document.querySelector("nav");
-const botaoLogin = document.createElement("button");
-botaoLogin.className = "tooltip";
-botaoLogin.innerHTML = `
-  <i class="fas fa-sign-in-alt"></i> Login
-  <span class="tooltiptext">Acessar conta</span>
-`;
-botaoLogin.onclick = criarTelaLogin;
-nav.appendChild(botaoLogin);
-
-// Função para criar a tela de login interativo
 function criarTelaLogin() {
   const main = document.getElementById("conteudo");
   main.innerHTML = "";
@@ -175,9 +104,6 @@ function criarTelaCadastro() {
   const main = document.getElementById("conteudo");
   main.innerHTML = "";
 
-  document.body.style.margin = "0";
-  document.body.style.padding = "0";
-  document.body.style.boxSizing = "border-box";
   document.body.style.backgroundColor = "#f0f4f8";
   document.body.style.fontFamily = "Arial, sans-serif";
 
@@ -196,6 +122,25 @@ function criarTelaCadastro() {
   titulo.style.color =  "#e53935";
   titulo.style.marginBottom = "20px";
   container.appendChild(titulo);
+
+  // Botões
+  const btnCadastro = document.createElement("button");
+  btnCadastro.textContent = "Cadastro";
+  const btnLogin = document.createElement("button");
+  btnLogin.textContent = "Login";
+  [btnCadastro, btnLogin].forEach(btn => {
+    btn.style.margin = "0 10px 15px";
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "30px";
+    btn.style.border = "none";
+    btn.style.backgroundColor = "#e53935";
+    btn.style.color = "#fff";
+    btn.style.fontWeight = "bold";
+    btn.style.cursor = "pointer";
+  });
+
+  container.appendChild(btnCadastro);
+  container.appendChild(btnLogin);
 
   // Campos de cadastro
   const inputNome = document.createElement("input");
