@@ -109,6 +109,38 @@ function navegar(pagina) {
       </div>
     `;
   } else if (pagina === "orientacoes") {
+    // Dicas e explicações
+    const dicas = [
+      {
+        dica: "Lave as mãos frequentemente",
+        explicacao: "Lavar as mãos com água e sabão elimina germes e previne doenças. Faça isso sempre antes de comer, após ir ao banheiro e ao chegar em casa."
+      },
+      {
+        dica: "Mantenha suas vacinas em dia",
+        explicacao: "Vacinas protegem você e a comunidade contra doenças graves. Consulte a unidade de saúde para saber quais vacinas estão disponíveis."
+      },
+      {
+        dica: "Alimente-se de forma saudável",
+        explicacao: "Uma alimentação equilibrada fortalece o sistema imunológico e previne doenças. Consuma frutas, verduras e evite alimentos ultraprocessados."
+      },
+      {
+        dica: "Pratique atividades físicas",
+        explicacao: "Exercícios regulares melhoram a saúde do coração, reduzem o estresse e aumentam a disposição. Caminhe, dance ou faça esportes."
+      },
+      {
+        dica: "Procure atendimento médico quando necessário",
+        explicacao: "Ao sentir sintomas persistentes ou graves, procure uma unidade de saúde. O diagnóstico precoce pode salvar vidas."
+      }
+    ];
+    let dicasHtml = dicas.map((d, i) => `
+      <li style="cursor:pointer" onclick="mostrarExplicacao(${i})">
+        <i class="fas fa-${
+          i === 0 ? 'hand-holding-water' :
+          i === 1 ? 'syringe' :
+          i === 2 ? 'utensils' :
+          i === 3 ? 'running' :
+          'procedures'}" style="color:var(--primary-color)"></i> ${d.dica}
+      </li>`).join('');
     html = `
       <h2 style='color:var(--primary-color)'>Orientações e Números de Emergência</h2>
       <div class="cards">
@@ -129,26 +161,45 @@ function navegar(pagina) {
           <div><strong>Vigilância Sanitária:</strong><br>(98) 3218-9131</div>
         </div>
       </div>
-     
       <div style="margin-top:2rem;background:white;padding:1.5rem;border-radius:10px;box-shadow:var(--shadow)">
         <h3 style="color:var(--primary-color);margin-top:0">Dicas de Saúde</h3>
-        <ul>
-          <li><i class="fas fa-hand-holding-water" style="color:var(--primary-color)"></i> Lave as mãos frequentemente</li>
-          <li><i class="fas fa-syringe" style="color:var(--primary-color)"></i> Mantenha suas vacinas em dia</li>
-          <li><i class="fas fa-utensils" style="color:var(--primary-color)"></i> Alimente-se de forma saudável</li>
-          <li><i class="fas fa-running" style="color:var(--primary-color)"></i> Pratique atividades físicas</li>
-          <li><i class="fas fa-procedures" style="color:var(--primary-color)"></i> Procure atendimento médico quando necessário</li>
+        <ul id="listaDicas">
+          ${dicasHtml}
         </ul>
-       
         <p style="text-align:center;margin-top:2rem">Para mais orientações, acesse:
           <a href='https://www.saude.ma.gov.br' target='_blank' style="color:var(--primary-color);font-weight:bold">
             saude.ma.gov.br
           </a>
         </p>
       </div>
+      <div id="popupDica" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:white;padding:2rem 1.5rem;max-width:350px;width:90vw;border-radius:16px;box-shadow:0 4px 24px #0002;text-align:center;position:relative;">
+          <button id="fecharPopupDica" style="position:absolute;top:10px;right:15px;background:none;border:none;font-size:1.5rem;color:#e53935;cursor:pointer;">&times;</button>
+          <div id="popupDicaTexto" style="color:#333;font-size:1.1rem;"></div>
+        </div>
+      </div>
     `;
   }
   conteudo.innerHTML = html;
+
+  // Função global para mostrar explicação em popup
+  window.mostrarExplicacao = function(idx) {
+    const dicas = [
+      "Lavar as mãos com água e sabão elimina germes e previne doenças. Faça isso sempre antes de comer, após ir ao banheiro e ao chegar em casa.",
+      "Vacinas protegem você e a comunidade contra doenças graves. Consulte a unidade de saúde para saber quais vacinas estão disponíveis.",
+      "Uma alimentação equilibrada fortalece o sistema imunológico e previne doenças. Consuma frutas, verduras e evite alimentos ultraprocessados.",
+      "Exercícios regulares melhoram a saúde do coração, reduzem o estresse e aumentam a disposição. Caminhe, dance ou faça esportes.",
+      "Ao sentir sintomas persistentes ou graves, procure uma unidade de saúde. O diagnóstico precoce pode salvar vidas."
+    ];
+    document.getElementById('popupDica').style.display = 'flex';
+    document.getElementById('popupDicaTexto').innerText = dicas[idx];
+  }
+  // Fecha popup ao clicar no X
+  if (document.getElementById('fecharPopupDica')) {
+    document.getElementById('fecharPopupDica').onclick = function() {
+      document.getElementById('popupDica').style.display = 'none';
+    };
+  }
  
   // Atualiza barra de progresso se for um formulário
   if (pagina === 'triagem' || pagina === 'pesquisa') {
