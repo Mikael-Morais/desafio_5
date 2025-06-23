@@ -117,30 +117,12 @@ function criarTelaCadastro() {
   container.style.textAlign = "center";
   main.appendChild(container);
 
+  // Título
   const titulo = document.createElement("h1");
   titulo.innerText = "Cadastro";
   titulo.style.color =  "#e53935";
   titulo.style.marginBottom = "20px";
   container.appendChild(titulo);
-
-  // Botões
-  const btnCadastro = document.createElement("button");
-  btnCadastro.textContent = "Cadastro";
-  const btnLogin = document.createElement("button");
-  btnLogin.textContent = "Login";
-  [btnCadastro, btnLogin].forEach(btn => {
-    btn.style.margin = "0 10px 15px";
-    btn.style.padding = "10px 20px";
-    btn.style.borderRadius = "30px";
-    btn.style.border = "none";
-    btn.style.backgroundColor = "#e53935";
-    btn.style.color = "#fff";
-    btn.style.fontWeight = "bold";
-    btn.style.cursor = "pointer";
-  });
-
-  container.appendChild(btnCadastro);
-  container.appendChild(btnLogin);
 
   // Campos de cadastro
   const inputNome = document.createElement("input");
