@@ -2,9 +2,6 @@ function criarTelaLogin() {
   const main = document.getElementById("conteudo");
   main.innerHTML = "";
 
-  document.body.style.margin = "0";
-  document.body.style.padding = "0";
-  document.body.style.boxSizing = "border-box";
   document.body.style.backgroundColor = "#f0f4f8";
   document.body.style.fontFamily = "Arial, sans-serif";
 
@@ -18,207 +15,153 @@ function criarTelaLogin() {
   container.style.textAlign = "center";
   main.appendChild(container);
 
-  // Título
   const titulo = document.createElement("h1");
-  titulo.innerText = "Login";
-  titulo.style.color =  "#e53935";
+  titulo.innerText = "Cadastro / Login";
+  titulo.style.color = "#e53935";
   titulo.style.marginBottom = "20px";
   container.appendChild(titulo);
 
-  // Campo de e-mail
-  const inputEmail = document.createElement("input");
-  inputEmail.type = "email";
-  inputEmail.placeholder = "Digite seu e-mail";
-  inputEmail.style.width = "100%";
-  inputEmail.style.padding = "10px";
-  inputEmail.style.marginBottom = "15px";
-  inputEmail.style.border = "1px solid #aaa";
-  inputEmail.style.borderRadius = "5px";
-  inputEmail.style.fontSize = "16px";
-  container.appendChild(inputEmail);
-
-  // Campo de senha
-  const inputSenha = document.createElement("input");
-  inputSenha.type = "password";
-  inputSenha.placeholder = "Digite sua senha";
-  inputSenha.style.width = "100%";
-  inputSenha.style.padding = "10px";
-  inputSenha.style.marginBottom = "15px";
-  inputSenha.style.border = "1px solid #aaa";
-  inputSenha.style.borderRadius = "5px";
-  inputSenha.style.fontSize = "16px";
-  container.appendChild(inputSenha);
-
-  // Botão de login
+  // Botões
+  const btnCadastro = document.createElement("button");
+  btnCadastro.textContent = "Cadastro";
   const btnLogin = document.createElement("button");
-  btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
-  btnLogin.style.display = "inline-flex";
-  btnLogin.style.alignItems = "center";
-  btnLogin.style.justifyContent = "center";
-  btnLogin.style.gap = "8px";
-  btnLogin.style.padding = "10px 20px";
-  btnLogin.style.backgroundColor = "#e53935";
-  btnLogin.style.color = "#fff";
-  btnLogin.style.border = "2px solid #fff";
-  btnLogin.style.borderRadius = "30px";
-  btnLogin.style.fontWeight = "bold";
-  btnLogin.style.fontSize = "14px";
-  btnLogin.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-  btnLogin.style.cursor = "pointer";
-  btnLogin.style.transition = "background-color 0.3s";
+  btnLogin.textContent = "Login";
+  [btnCadastro, btnLogin].forEach(btn => {
+    btn.style.margin = "0 10px 15px";
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "30px";
+    btn.style.border = "none";
+    btn.style.backgroundColor = "#e53935";
+    btn.style.color = "#fff";
+    btn.style.fontWeight = "bold";
+    btn.style.cursor = "pointer";
+  });
+
+  container.appendChild(btnCadastro);
   container.appendChild(btnLogin);
 
-  // Mensagem para cadastro
-  const msgCadastro = document.createElement("div");
-  msgCadastro.innerHTML = 'Não tem conta? <span id="linkCadastro" style="color:#e53935;cursor:pointer;text-decoration:underline;">Cadastre-se</span>';
-  msgCadastro.style.marginTop = "20px";
-  msgCadastro.style.fontSize = "15px";
-  container.appendChild(msgCadastro);
+  const pergunta = document.createElement("div");
+  pergunta.style.fontSize = "18px";
+  pergunta.style.marginTop = "20px";
+  pergunta.style.marginBottom = "15px";
+  pergunta.style.color = "#333";
+  container.appendChild(pergunta);
 
-  // Mensagem de erro
-  const msgErro = document.createElement("div");
-  msgErro.id = "msgErroLogin";
-  msgErro.style.color = "red";
-  msgErro.style.marginTop = "10px";
-  msgErro.style.fontSize = "14px";
-  container.appendChild(msgErro);
+  const resposta = document.createElement("input");
+  resposta.style.width = "100%";
+  resposta.style.padding = "10px";
+  resposta.style.border = "1px solid #aaa";
+  resposta.style.borderRadius = "5px";
+  resposta.style.marginBottom = "15px";
+  container.appendChild(resposta);
 
-  // Evento de login (exemplo, sem backend)
-  btnLogin.onclick = function() {
-    const email = inputEmail.value.trim();
-    const senha = inputSenha.value.trim();
-    if (!email || !senha) {
-      msgErro.innerText = "Preencha todos os campos.";
+  const btnProximo = document.createElement("button");
+  btnProximo.innerHTML = "Próximo";
+  btnProximo.style.padding = "10px 20px";
+  btnProximo.style.borderRadius = "30px";
+  btnProximo.style.border = "none";
+  btnProximo.style.backgroundColor = "#e53935";
+  btnProximo.style.color = "#fff";
+  btnProximo.style.fontWeight = "bold";
+  btnProximo.style.cursor = "pointer";
+  container.appendChild(btnProximo);
+
+  let modo = "cadastro";
+  let indice = 0;
+  let respostas = {};
+  const perguntasCadastro = [
+    { campo: "email", pergunta: "Digite seu e-mail", tipo: "email" },
+    { campo: "usuario", pergunta: "Crie um nome de usuário", tipo: "text" },
+    { campo: "cpf", pergunta: "Digite seu CPF", tipo: "text" },
+    { campo: "senha", pergunta: "Crie uma senha", tipo: "password" },
+    { campo: "nascimento", pergunta: "Digite sua data de nascimento", tipo: "date" }
+  ];
+
+  const perguntasLogin = [
+    { campo: "usuario", pergunta: "Nome de usuário", tipo: "text" },
+    { campo: "senha", pergunta: "Senha", tipo: "password" }
+  ];
+
+  let perguntas = perguntasCadastro;
+
+  function mostrarPergunta() {
+    const atual = perguntas[indice];
+    pergunta.innerText = atual.pergunta;
+    resposta.type = atual.tipo;
+    resposta.value = "";
+    resposta.focus();
+  }
+
+  function avancarPergunta() {
+    const valor = resposta.value.trim();
+    if (valor === "") {
+      alert("Preencha o campo.");
       return;
     }
-    // Aqui você faria o fetch para o backend
-    msgErro.innerText = "(Exemplo) Login enviado para o backend.";
+
+    respostas[perguntas[indice].campo] = valor;
+    indice++;
+
+    if (indice < perguntas.length) {
+      mostrarPergunta();
+    } else {
+      if (modo === "cadastro") {
+        salvarCadastro(respostas);
+        pergunta.innerText = "Cadastro concluído!";
+      } else {
+        const sucesso = verificarLogin(respostas);
+        pergunta.innerText = sucesso ? "Login realizado!" : "Usuário ou senha incorretos!";
+      }
+
+      resposta.style.display = "none";
+      btnProximo.style.display = "none";
+    }
+  }
+
+  function salvarCadastro(dados) {
+    
+    localStorage.setItem("usuario_" + dados.usuario, JSON.stringify(dados));
+  }
+
+  function verificarLogin(loginData) {
+    const armazenado = localStorage.getItem("usuario_" + loginData.usuario);
+    if (!armazenado) return false;
+
+    const dados = JSON.parse(armazenado);
+    return dados.senha === loginData.senha;
+  }
+
+  btnCadastro.onclick = () => {
+    modo = "cadastro";
+    perguntas = perguntasCadastro;
+    indice = 0;
+    respostas = {};
+    resposta.style.display = "block";
+    btnProximo.style.display = "inline-block";
+    mostrarPergunta();
   };
 
-  // Evento para ir para tela de cadastro
-  document.getElementById("linkCadastro").onclick = criarTelaCadastro;
-}
-
-// Função para criar a tela de cadastro (igual à sua tela anterior)
-function criarTelaCadastro() {
-  const main = document.getElementById("conteudo");
-  main.innerHTML = "";
-
-  document.body.style.backgroundColor = "#f0f4f8";
-  document.body.style.fontFamily = "Arial, sans-serif";
-
-  const container = document.createElement("div");
-  container.style.width = "400px";
-  container.style.margin = "80px auto";
-  container.style.padding = "30px";
-  container.style.backgroundColor = "white";
-  container.style.borderRadius = "10px";
-  container.style.boxShadow = "0px 0px 10px #ccc";
-  container.style.textAlign = "center";
-  main.appendChild(container);
-
-  // Título
-  const titulo = document.createElement("h1");
-  titulo.innerText = "Cadastro";
-  titulo.style.color =  "#e53935";
-  titulo.style.marginBottom = "20px";
-  container.appendChild(titulo);
-
-  // Campos de cadastro
-  const inputNome = document.createElement("input");
-  inputNome.type = "text";
-  inputNome.placeholder = "Nome completo";
-  inputNome.style.width = "100%";
-  inputNome.style.padding = "10px";
-  inputNome.style.marginBottom = "15px";
-  inputNome.style.border = "1px solid #aaa";
-  inputNome.style.borderRadius = "5px";
-  inputNome.style.fontSize = "16px";
-  container.appendChild(inputNome);
-
-  const inputEmail = document.createElement("input");
-  inputEmail.type = "email";
-  inputEmail.placeholder = "E-mail";
-  inputEmail.style.width = "100%";
-  inputEmail.style.padding = "10px";
-  inputEmail.style.marginBottom = "15px";
-  inputEmail.style.border = "1px solid #aaa";
-  inputEmail.style.borderRadius = "5px";
-  inputEmail.style.fontSize = "16px";
-  container.appendChild(inputEmail);
-
-  const inputSenha = document.createElement("input");
-  inputSenha.type = "password";
-  inputSenha.placeholder = "Senha";
-  inputSenha.style.width = "100%";
-  inputSenha.style.padding = "10px";
-  inputSenha.style.marginBottom = "15px";
-  inputSenha.style.border = "1px solid #aaa";
-  inputSenha.style.borderRadius = "5px";
-  inputSenha.style.fontSize = "16px";
-  container.appendChild(inputSenha);
-
-  const inputConfirma = document.createElement("input");
-  inputConfirma.type = "password";
-  inputConfirma.placeholder = "Confirme a senha";
-  inputConfirma.style.width = "100%";
-  inputConfirma.style.padding = "10px";
-  inputConfirma.style.marginBottom = "15px";
-  inputConfirma.style.border = "1px solid #aaa";
-  inputConfirma.style.borderRadius = "5px";
-  inputConfirma.style.fontSize = "16px";
-  container.appendChild(inputConfirma);
-
-  // Botão de cadastro
-  const btnCadastrar = document.createElement("button");
-  btnCadastrar.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
-  btnCadastrar.style.display = "inline-flex";
-  btnCadastrar.style.alignItems = "center";
-  btnCadastrar.style.justifyContent = "center";
-  btnCadastrar.style.gap = "8px";
-  btnCadastrar.style.padding = "10px 20px";
-  btnCadastrar.style.backgroundColor = "#e53935";
-  btnCadastrar.style.color = "#fff";
-  btnCadastrar.style.border = "2px solid #fff";
-  btnCadastrar.style.borderRadius = "30px";
-  btnCadastrar.style.fontWeight = "bold";
-  btnCadastrar.style.fontSize = "14px";
-  btnCadastrar.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-  btnCadastrar.style.cursor = "pointer";
-  btnCadastrar.style.transition = "background-color 0.3s";
-  container.appendChild(btnCadastrar);
-
-  // Mensagem para login
-  const msgLogin = document.createElement("div");
-  msgLogin.innerHTML = 'Já tem conta? <span id="linkLogin" style="color:#e53935;cursor:pointer;text-decoration:underline;">Entrar</span>';
-  msgLogin.style.marginTop = "20px";
-  msgLogin.style.fontSize = "15px";
-  container.appendChild(msgLogin);
-
-  // Mensagem de erro
-  const msgErro = document.createElement("div");
-  msgErro.id = "msgErroCadastro";
-  msgErro.style.color = "red";
-  msgErro.style.marginTop = "10px";
-  msgErro.style.fontSize = "14px";
-  container.appendChild(msgErro);
-
-  btnCadastrar.onclick = function() {
-    const nome = inputNome.value.trim();
-    const email = inputEmail.value.trim();
-    const senha = inputSenha.value.trim();
-    const confirma = inputConfirma.value.trim();
-    if (!nome || !email || !senha || !confirma) {
-      msgErro.innerText = "Preencha todos os campos.";
-      return;
-    }
-    if (senha !== confirma) {
-      msgErro.innerText = "As senhas não coincidem.";
-      return;
-    }
-    // Aqui você faria o fetch para o backend
-    msgErro.innerText = "(Exemplo) Cadastro enviado para o backend.";
+  btnLogin.onclick = () => {
+    modo = "login";
+    perguntas = perguntasLogin;
+    indice = 0;
+    respostas = {};
+    resposta.style.display = "block";
+    btnProximo.style.display = "inline-block";
+    mostrarPergunta();
   };
 
-  document.getElementById("linkLogin").onclick = criarTelaLogin;
+  btnProximo.onclick = avancarPergunta;
+
+  resposta.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      avancarPergunta();
+    }
+  });
+
+  
+  btnCadastro.click();
 }
+
+
