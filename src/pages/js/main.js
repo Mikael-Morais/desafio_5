@@ -384,3 +384,41 @@ window.onload = () => {
   }, 100);
 };
 
+function initMap() {
+  const checkMap = setInterval(() => {
+    const mapDiv = document.getElementById("map");
+    if (mapDiv) {
+      clearInterval(checkMap);
+      // Corrigido: define a variável global `map`
+      map = new google.maps.Map(mapDiv, {
+        center: { lat: -2.529722, lng: -44.3028 },
+        zoom: 12
+      });
+      // Isso faz o filtros.js funcionar corretamente
+      if (typeof carregarDados === 'function') {
+        carregarDados();
+      }
+    }
+  }, 100);
+}
+
+function inicializarMapaSeExistir() {
+  const mapDiv = document.getElementById("map");
+  if (mapDiv) {
+    aguardarMapaEInicializar(); // ou initMap(); se preferir direto
+  }
+}
+
+
+function aguardarMapaEInicializar() {
+  const tentar = () => {
+    const mapDiv = document.getElementById("map");
+    if (mapDiv) {
+      initMap();
+    } else {
+      // Tenta novamente no próximo frame
+      requestAnimationFrame(tentar);
+    }
+  };
+  tentar();
+}
