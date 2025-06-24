@@ -353,7 +353,6 @@ window.onload = () => {
   }, 100);
 };
 
-
 function initMap() {
   const checkMap = setInterval(() => {
     const mapDiv = document.getElementById("map");
@@ -392,5 +391,4 @@ function aguardarMapaEInicializar() {
   };
   tentar();
 }
-
 
