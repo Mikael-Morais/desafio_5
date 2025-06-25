@@ -1,10 +1,16 @@
+import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import { fileURLToPath } from 'url';
-import triagemRoutes from "./src/server/routes/triagem_routes.js";
-import pesquisaRoutes from "./src/server/routes/pesquisa_routes.js";
+
+import userRoutes from './src/server/routes/user.js';
+import triagemRoutes from './src/server/routes/triagem_routes.js';
+import pesquisaRoutes from './src/server/routes/pesquisa_routes.js';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,21 +29,27 @@ db.exec(schema, (err) => {
   }
 });
 
-// === Servidor Express ===
+// === App Express ===
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 app.use(express.json());
+
+// === Servir arquivos estáticos (HTML, CSS, JS) ===
 app.use(express.static(path.join(__dirname, 'src', 'pages')));
-app.use(triagemRoutes(db));
-app.use(pesquisaRoutes(db));
 
+// === Rotas da API ===
+app.use('/api', userRoutes);         // rotas de login/autenticação
+app.use('/api', triagemRoutes(db));  // rotas de triagem (com acesso ao banco)
+app.use('/api', pesquisaRoutes(db)); // rotas de pesquisa (com acesso ao banco)
 
+// === Página inicial ===
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'pages', 'index.html'));
 });
 
-
-// Porta do servidor
-const PORT = process.env.PORT || 3000;
+// === Iniciar servidor ===
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

@@ -23,4 +23,3 @@ CREATE TABLE IF NOT EXISTS pesquisa (
     data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES users(id)
 );
-

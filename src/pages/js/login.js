@@ -99,6 +99,31 @@ function criarTelaLogin() {
       return;
     }
 
+    async function fazerLogin({ usuario, senha }) {
+      try {
+        const response = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user: usuario,
+          password: senha
+        })
+        });
+
+        const data = await response.json();
+
+        if (data.auth) {
+          localStorage.setItem('token', data.token);
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.error('Erro no login:', error);
+        return false;
+      }
+    }
+
     respostas[perguntas[indice].campo] = valor;
     indice++;
 
@@ -109,8 +134,21 @@ function criarTelaLogin() {
         salvarCadastro(respostas);
         pergunta.innerText = "Cadastro concluído!";
       } else {
-        const sucesso = verificarLogin(respostas);
-        pergunta.innerText = sucesso ? "Login realizado!" : "Usuário ou senha incorretos!";
+        fazerLogin(respostas).then(sucesso => {
+          if (sucesso) {
+            pergunta.innerText = "Login realizado!";
+            
+            // Aguarda 2 segundo para o usuário ver a mensagem e depois redireciona
+            setTimeout(() => {
+                navegar('home'); // Chama a função de navegação do main.js 
+            }, 2000); // Atraso de 2 segundos
+          } else {
+            pergunta.innerText = "Usuário ou senha incorretos!";
+          }
+
+          resposta.style.display = "none";
+          btnProximo.style.display = "none";
+        });
       }
 
       resposta.style.display = "none";
@@ -119,7 +157,6 @@ function criarTelaLogin() {
   }
 
   function salvarCadastro(dados) {
-    
     localStorage.setItem("usuario_" + dados.usuario, JSON.stringify(dados));
   }
 
@@ -160,8 +197,5 @@ function criarTelaLogin() {
     }
   });
 
-  
   btnCadastro.click();
 }
-
-
