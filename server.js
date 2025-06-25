@@ -10,6 +10,7 @@ import userRoutes from './src/server/routes/user.js';
 import triagemRoutes from './src/server/routes/triagem_routes.js';
 import pesquisaRoutes from './src/server/routes/pesquisa_routes.js';
 
+
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
