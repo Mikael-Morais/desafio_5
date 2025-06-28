@@ -34,7 +34,8 @@ router.post('/login', async (req, res) => {
       expiresIn: 300 // 5 minutos
     });
 
-    res.json({ auth: true, token });
+
+    res.json({ auth: true, token, usuario_id: foundUser.id, name: foundUser.name });
   } catch (err) {
     console.error(err);
     res.status(500).json({ auth: false, message: 'Erro no servidor' });

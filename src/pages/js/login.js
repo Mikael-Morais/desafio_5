@@ -132,6 +132,8 @@ function criarTelaLogin() {
       group.appendChild(input);
       form.appendChild(group);
     });
+    // Garante que o botão de enviar sempre aparece
+    form.appendChild(btnEnviar);
   }
 
   function setModo(novoModo) {
@@ -228,11 +230,22 @@ function criarTelaLogin() {
           })
         });
         const data = await response.json();
+        console.log('Resposta do /api/login:', data);
         if (response.ok && data.auth) {
           msg.style.color = "#388e3c";
           msg.style.background = "#e8f5e9";
           msg.innerText = "Login realizado! Redirecionando...";
           localStorage.setItem('token', data.token);
+          if (data.usuario_id) {
+            localStorage.setItem('usuario_id', String(data.usuario_id));
+          } else {
+            localStorage.removeItem('usuario_id');
+          }
+          if (data.name) {
+            localStorage.setItem('user_name', data.name);
+          } else {
+            localStorage.removeItem('user_name');
+          }
           setTimeout(() => navegar('home'), 1500);
         } else {
           msg.innerText = data.message || "Usuário ou senha inválidos.";

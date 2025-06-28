@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 export default (db) => {
-  router.post('/api/pesquisa', (req, res) => {
+  router.post('/pesquisa', (req, res) => {
     const { respostas, usuario_id } = req.body;
     console.log('Respostas recebidas:', respostas); // Diagnóstico
     if (!Array.isArray(respostas)) {
@@ -25,9 +25,10 @@ export default (db) => {
       "As salas de espera eram confortáveis?",
       "Você se sentiu seguro durante o atendimento?"
     ];
+    const usuarioId = usuario_id || null;
     const stmt = db.prepare("INSERT INTO pesquisa (usuario_id, pergunta, resposta) VALUES (?, ?, ?)");
     respostas.forEach((resposta, idx) => {
-      stmt.run(null, perguntasPesquisa[idx], resposta);
+      stmt.run(usuarioId, perguntasPesquisa[idx], resposta);
     });
     stmt.finalize((err) => {
       if (err) {

@@ -33,6 +33,7 @@ let currentPage = 'home';
 let currentQuestion = 0;
 let respostasTriagem = Array(perguntasTriagem.length).fill('');
 let respostasPesquisa = Array(perguntasPesquisa.length).fill('');
+let map;
 
 function navegar(pagina) {
   currentPage = pagina;
@@ -270,6 +271,17 @@ function proximaPergunta(direcao, tipo, total) {
 
     // Se for a última pergunta, envie para o backend
     if (currentQuestion === total - 1) {
+      // Verifica se o usuário está logado
+      const usuario_id = localStorage.getItem('usuario_id');
+      if (!usuario_id) {
+        alert('Você precisa estar logado para enviar suas respostas!');
+        if (typeof criarTelaLogin === 'function') {
+          criarTelaLogin();
+        } else {
+          window.location.reload(); // fallback
+        }
+        return;
+      }
       let respostas;
       let endpoint;
       if (tipo === 'triagem') {
@@ -282,7 +294,10 @@ function proximaPergunta(direcao, tipo, total) {
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ respostas })
+        body: JSON.stringify({
+          respostas: respostas,
+          usuario_id: usuario_id
+        })
       })
       .then(response => response.json())
       .then(data => {
@@ -360,13 +375,38 @@ function enviarForm(tipo, qtd) {
     respostasPesquisa[qtd-1] = ultimaResposta;
     respostas = respostasPesquisa;
   }
+  // Verifica se todas as respostas estão preenchidas
+  if (respostas.some(r => !r || r.trim() === '')) {
+    document.getElementById("msg").innerText = "Responda todas as perguntas antes de enviar.";
+    document.getElementById("msg").style.color = "red";
+    return;
+  }
+  // Verifica se o usuário está logado
+  const usuario_id = localStorage.getItem('usuario_id');
+  const token = localStorage.getItem('token');
+  if (!usuario_id || usuario_id === 'null' || usuario_id === 'undefined') {
+    document.getElementById("msg").innerText = "Erro: usuário não identificado. Faça login novamente.";
+    document.getElementById("msg").style.color = "red";
+    alert('Você precisa estar logado para enviar suas respostas!');
+    if (typeof criarTelaLogin === 'function') {
+      criarTelaLogin();
+    } else {
+      window.location.reload(); // fallback
+    }
+    return;
+  }
+  // Garante que o array enviado é limpo (sem buracos)
+  const respostasLimpa = Array.from(respostas);
   // Define o endpoint de acordo com o tipo
   const endpoint = tipo === 'pesquisa' ? '/api/pesquisa' : '/api/triagem';
   // Envia as respostas para o backend
   fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ respostas })
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+    },
+    body: JSON.stringify({ respostas: respostasLimpa, usuario_id: String(usuario_id) })
   })
   .then(response => response.json())
   .then(data => {
@@ -384,14 +424,53 @@ function enviarForm(tipo, qtd) {
   });
 }
 
+window.logout = function() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('usuario_id');
+  localStorage.removeItem('user_name');
+  window.location.reload();
+};
+
+function atualizarSaudacaoUsuario() {
+  const saudacao = document.getElementById('saudacao-usuario');
+  const nome = localStorage.getItem('user_name');
+  if (saudacao) {
+    if (nome) {
+      saudacao.innerHTML = `Olá, <span style="font-weight:bold">${nome.split(' ')[0]}</span> <button id="logout-btn" title="Sair" style="margin-left:10px;padding:6px 20px;border-radius:20px;border:none;background:linear-gradient(90deg,#e53935,#d81b60);color:#fff;cursor:pointer;font-size:1em;box-shadow:0 2px 8px #e5393533;transition:background 0.2s,transform 0.1s;display:inline-flex;align-items:center;gap:8px;outline:none;letter-spacing:0.5px;">
+        <i class='fas fa-sign-out-alt' style='font-size:1.1em;'></i> Sair
+      </button>`;
+      const btn = document.getElementById('logout-btn');
+      btn.onmouseover = () => btn.style.background = 'linear-gradient(90deg,#d81b60,#e53935)';
+      btn.onmouseout = () => btn.style.background = 'linear-gradient(90deg,#e53935,#d81b60)';
+      btn.onmousedown = () => btn.style.transform = 'scale(0.96)';
+      btn.onmouseup = () => btn.style.transform = 'scale(1)';
+      btn.onclick = logout;
+      saudacao.style.display = 'inline-block';
+    } else {
+      saudacao.innerHTML = '';
+      saudacao.style.display = 'none';
+    }
+  }
+}
+
+// Chama a saudação sempre que navegar ou logar
+const _navegar = navegar;
+navegar = function(pagina) {
+  _navegar(pagina);
+  atualizarSaudacaoUsuario();
+};
+
 window.onload = () => {
   navegar("home");
- 
+  atualizarSaudacaoUsuario();
   // Adiciona efeito de digitação no título
   const titulo = document.querySelector('header h1');
+  if (!titulo) {
+    console.error('Elemento header h1 não encontrado!');
+    return;
+  }
   const textoOriginal = titulo.textContent;
   titulo.textContent = '';
- 
   let i = 0;
   const typingEffect = setInterval(() => {
     if (i < textoOriginal.length) {
@@ -408,14 +487,17 @@ function initMap() {
     const mapDiv = document.getElementById("map");
     if (mapDiv) {
       clearInterval(checkMap);
-      // Corrigido: define a variável global `map`
-      map = new google.maps.Map(mapDiv, {
-        center: { lat: -2.529722, lng: -44.3028 },
-        zoom: 12
-      });
-      // Isso faz o filtros.js funcionar corretamente
-      if (typeof carregarDados === 'function') {
-        carregarDados();
+      try {
+        map = new google.maps.Map(mapDiv, {
+          center: { lat: -2.529722, lng: -44.3028 },
+          zoom: 12
+        });
+        if (typeof carregarDados === 'function') {
+          carregarDados();
+        }
+      } catch (e) {
+        console.error('Erro ao inicializar o mapa:', e);
+        mapDiv.innerHTML = '<div style="color:red">Erro ao carregar o mapa. Verifique sua conexão ou chave da API do Google Maps.</div>';
       }
     }
   }, 100);

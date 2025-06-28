@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 export default (db) => {
-  router.post('/api/triagem', (req, res) => {
+  router.post('/triagem', (req, res) => {
     const { respostas, usuario_id } = req.body;
     console.log('Respostas recebidas:', respostas); // Diagnóstico
     if (!Array.isArray(respostas)) {
@@ -21,9 +21,10 @@ export default (db) => {
       "Você está com manchas pelo corpo?",
       "Está com sangramento ou secreções anormais?"
     ];
+    const usuarioId = usuario_id || null;
     const stmt = db.prepare("INSERT INTO triagem (usuario_id, pergunta, resposta) VALUES (?, ?, ?)");
     respostas.forEach((resposta, idx) => {
-      stmt.run(null, perguntasTriagem[idx], resposta);
+      stmt.run(usuarioId, perguntasTriagem[idx], resposta);
     });
     stmt.finalize((err) => {
       if (err) {
