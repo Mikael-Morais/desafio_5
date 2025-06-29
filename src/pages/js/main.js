@@ -523,4 +523,3 @@ function aguardarMapaEInicializar() {
   };
   tentar();
 }
-
