@@ -132,8 +132,8 @@ function criarTelaLogin() {
       group.appendChild(input);
       form.appendChild(group);
     });
-    // Garante que o botão de enviar sempre aparece
     form.appendChild(btnEnviar);
+    form.onsubmit = handleSubmit; // Garante que o evento de submit é sempre reatribuído
   }
 
   function setModo(novoModo) {
@@ -172,10 +172,9 @@ function criarTelaLogin() {
   btnEnviar.style.marginTop = "10px";
   btnEnviar.style.cursor = "pointer";
   btnEnviar.style.boxShadow = "0 2px 8px #e5393533";
-  form.appendChild(btnEnviar);
 
   // Evento de submit
-  form.onsubmit = async function(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     msg.style.color = "#e53935";
     msg.style.background = "#fff0f0";
@@ -254,7 +253,7 @@ function criarTelaLogin() {
         msg.innerText = "Erro de comunicação com o servidor.";
       }
     }
-  };
+  }
 
   // Acessibilidade: Enter no último campo envia
   form.addEventListener("keydown", function(e) {
@@ -267,6 +266,6 @@ function criarTelaLogin() {
     }
   });
 
-  // Inicializa em modo cadastro
-  setModo("cadastro");
+  // Inicializa em modo login
+  setModo("login");
 }
