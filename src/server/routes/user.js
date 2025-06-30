@@ -66,4 +66,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.get('/dev/users', async (req, res) => {
+  try {
+    const db = await connect();
+    const users = await db.all('SELECT id, name, email, username, cpf, nascimento FROM users');
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Erro ao buscar usuários.' });
+  }
+});
+
 export default router;
