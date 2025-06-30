@@ -36,6 +36,22 @@ Se preferir rodar localmente:
    ```
 4. Acesse o frontend pelo navegador (ex: `http://localhost:3000`)
 
+## Endpoints principais
+
+### Autenticação e Usuários
+- `POST /api/login` — Login do usuário. Body: `{ user, password }`
+- `POST /api/register` — Cadastro de novo usuário. Body: `{ name, email, username, cpf, password, nascimento }`
+- `GET /api/dev/users` — Lista todos os usuários (rota para desenvolvedores)
+
+### Triagem
+- `POST /api/triagem` — Envia respostas da triagem. Body: `{ respostas: [ ... ], usuario_id }`
+
+### Pesquisa de Satisfação
+- `POST /api/pesquisa` — Envia respostas da pesquisa. Body: `{ respostas: [ ... ], usuario_id }`
+
+### Outros
+- `GET /api/clientes` — Lista usuários (rota protegida, requer JWT)
+
 ## Observações
 - Após o envio da triagem ou pesquisa, o usuário recebe um e-mail automático de confirmação/agradecimento.
 - O sistema utiliza prepared statements para evitar SQL Injection.
