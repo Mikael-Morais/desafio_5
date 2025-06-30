@@ -21,6 +21,10 @@ Sistema web de triagem e pesquisa de satisfação em saúde, desenvolvido em Nod
 - Nodemailer para envio de e-mails
 
 ## Como rodar o projeto
+Você pode acessar a versão online pronta do sistema em:
+👉 **https://desafio-5-1ut2.onrender.com/**
+
+Se preferir rodar localmente:
 1. Instale as dependências:
    ```
    npm install
