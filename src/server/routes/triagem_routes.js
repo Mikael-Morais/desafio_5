@@ -40,8 +40,8 @@ export default (db) => {
             const transporter = nodemailer.createTransport({
               service: 'gmail',
               auth: {
-                user: 'miunsteste@gmail.com',
-                pass: 'fdwr pfgf csgs vpxb'
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
               }
             });
             db.get("SELECT name FROM users WHERE id = ?", [usuarioId], (err, row) => {
@@ -50,7 +50,7 @@ export default (db) => {
               } else if (row) {
                 const paciente = row.name;
                 const mailOptions = {
-                  from: 'miunsteste@gmail.com',
+                  from: process.env.GMAIL_USER,
                   to: usuarioEmail,
                   subject: 'Sua triagem foi recebida com sucesso',
                   text: `Olá ${paciente},\n\nEsperamos que você esteja bem! Informamos que sua triagem foi recebida com sucesso e já está sendo cuidadosamente analisada por um de nossos especialistas. Em breve, entraremos em contato com uma resposta personalizada, com toda a atenção e o cuidado que sua saúde merece.\nNosso compromisso é oferecer um atendimento ágil, humano e de qualidade — porque cuidar de você é a nossa prioridade. Se tiver qualquer dúvida, estamos à disposição. \n\nAtenciosamente, Saúde Conectada MA`
