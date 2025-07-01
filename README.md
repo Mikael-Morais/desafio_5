@@ -4,11 +4,14 @@
 ## Descrição
 Sistema web de triagem e pesquisa de satisfação em saúde, desenvolvido em Node.js/Express com SQLite e frontend em HTML/JS. Permite cadastro/login de usuários, envio e armazenamento de respostas de triagem e pesquisa, exibição de dicas de saúde, dashboard, autenticação JWT e integração frontend/backend.
 
+O sistema conta,também, com um dashboard analítico integrado ao Power BI, exibindo indicadores e visualizações interativas sobre os dados de saúde diretamente na interface web. 
+
 ## Funcionalidades
 - Cadastro e login de usuários (com autenticação JWT)
 - Triagem médica online (perguntas e respostas)
 - Pesquisa de satisfação sobre serviços de saúde
 - Dashboard com dados e mapa
+- Dashboard analítico integrado ao Power BI
 - Saudação personalizada e logout
 - Envio automático de e-mail ao usuário após triagem e pesquisa
 - Rotas protegidas e rotas de desenvolvedor para consulta de usuários
@@ -19,6 +22,7 @@ Sistema web de triagem e pesquisa de satisfação em saúde, desenvolvido em Nod
 - HTML, CSS, JavaScript (frontend)
 - JWT para autenticação
 - Nodemailer para envio de e-mails
+- Power BI (integração de dashboard analítico)
 
 ## Como rodar o projeto
 Você pode acessar a versão online pronta do sistema em:
