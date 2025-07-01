@@ -101,6 +101,17 @@ function navegar(pagina) {
           <div><strong>Enfermeiros por 100 mil hab.:</strong><br>216</div>
         </div>
       </div>
+
+    <div style="margin-top:2rem;background:white;padding:1.5rem;border-radius:10px;box-shadow:var(--shadow)">
+      <h3 style="color:var(--primary-color);margin-top:0">Painel Analítico</h3>
+      <iframe title="equipe_6" width="100%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiYTY5ZDg3ZDYtYmFlNC00NmI1LWI1ZGYtMDZkNDcwNGZiYjQ4IiwidCI6ImIzYzAwMzk5LTEwNjEtNGEyOS04NWE2LWQxNWEyMzljM2FkNSJ9&pageName=b7b8f4dfc1a9e901a894" frameborder="0" allowFullScreen="true" style="border-radius:8px;"></iframe>
+      <div style="text-align:right;margin-top:10px;">
+        <a href="https://app.powerbi.com/view?r=eyJrIjoiYTY5ZDg3ZDYtYmFlNC00NmI1LWI1ZGYtMDZkNDcwNGZiYjQ4IiwidCI6ImIzYzAwMzk5LTEwNjEtNGEyOS04NWE2LWQxNWEyMzljM2FkNSJ9&pageName=b7b8f4dfc1a9e901a894" target="_blank" style="color:var(--primary-color);font-weight:bold;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:1.08em;">
+          <i class="fas fa-external-link-alt"></i> Para maiores detalhes clique aqui
+        </a>
+      </div>
+    </div>
+
     <div style="margin-top:2rem;background:white;padding:1.5rem;border-radius:10px;box-shadow:var(--shadow)">
       <h3 style="color:var(--primary-color);margin-top:0">Filtros</h3>
       <label for="filtro-unidade">Filtrar por Unidade:</label><br />

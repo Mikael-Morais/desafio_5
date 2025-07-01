@@ -4,7 +4,7 @@ dotenv.config();
 const SECRET = process.env.JWT_SECRET;
 
 import express from 'express';
-import { connect } from '../../../database.js';
+import { connect } from '../database.js';
 import { verifyJWT } from '../../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 
